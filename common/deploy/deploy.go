@@ -16,12 +16,8 @@ import (
 )
 
 type MongoDBProvider struct {
-	Project *mongodbatlas.Project
-	Cluster *mongodbatlas.Cluster
-
 	MongoDBConfig *MongoDBConfig
 	Provider      string
-	ClusterURL    pulumi.StringOutput
 }
 
 func NewMongoDBProvider(provider string) *MongoDBProvider {
@@ -31,8 +27,6 @@ func NewMongoDBProvider(provider string) *MongoDBProvider {
 }
 
 func (p *MongoDBProvider) Pre(ctx *pulumi.Context, resources []*pulumix.NitricPulumiResource[any], projectName string, region string) error {
-	var err error
-
 	// Check if a key value store exists, if so get/create a (default) firestore database
 	databases := lo.Filter(resources, func(res *pulumix.NitricPulumiResource[any], idx int) bool {
 		_, ok := res.Config.(*deploymentspb.Resource_KeyValueStore)
@@ -40,7 +34,7 @@ func (p *MongoDBProvider) Pre(ctx *pulumi.Context, resources []*pulumix.NitricPu
 	})
 
 	if len(databases) > 0 {
-		p.Project, err = mongodb.NewProject(ctx, projectName, &mongodb.ProjectArgs{
+		project, err := mongodb.NewProject(ctx, projectName, &mongodb.ProjectArgs{
 			Name:  pulumi.String(projectName),
 			OrgId: pulumi.String(p.MongoDBConfig.OrgId),
 		})
@@ -50,8 +44,8 @@ func (p *MongoDBProvider) Pre(ctx *pulumi.Context, resources []*pulumix.NitricPu
 
 		clusterName := "nitric"
 
-		p.Cluster, err = mongodbatlas.NewCluster(ctx, clusterName, &mongodbatlas.ClusterArgs{
-			ProjectId:                p.Project.ID(),
+		cluster, err := mongodbatlas.NewCluster(ctx, clusterName, &mongodbatlas.ClusterArgs{
+			ProjectId:                project.ID(),
 			Name:                     pulumi.String(clusterName),
 			AutoScalingDiskGbEnabled: pulumi.Bool(true),
 			ProviderRegionName:       pulumi.String(strings.ToUpper(region)),
@@ -73,41 +67,48 @@ func (p *MongoDBProvider) Pre(ctx *pulumi.Context, resources []*pulumix.NitricPu
 			return err
 		}
 
-		roles := mongodbatlas.DatabaseUserRoleArray{
-			&mongodbatlas.DatabaseUserRoleArgs{
-				RoleName:     pulumi.String("readAnyDatabase"),
-				DatabaseName: pulumi.String("admin"),
-			},
-		}
-
-		for _, db := range databases {
-			dbName := db.Id.Name
-
-			roles = append(roles, &mongodbatlas.DatabaseUserRoleArgs{
-				RoleName:     pulumi.String("readWrite"),
-				DatabaseName: pulumi.String(dbName),
-			})
-		}
-
 		user, err := mongodb.NewDatabaseUser(ctx, "nitric-user", &mongodb.DatabaseUserArgs{
 			Username:         pulumi.String("nitric-user"),
 			Password:         dbMasterPassword.Result,
-			ProjectId:        p.Project.ID(),
+			ProjectId:        project.ID(),
 			AuthDatabaseName: pulumi.String("admin"),
-			Roles:            roles,
+			Roles: mongodbatlas.DatabaseUserRoleArray{
+				&mongodbatlas.DatabaseUserRoleArgs{
+					RoleName:     pulumi.String("readWriteAnyDatabase"),
+					DatabaseName: pulumi.String("admin"),
+				},
+			},
 		})
 		if err != nil {
 			return err
 		}
 
-		p.ClusterURL = pulumi.All(p.Cluster.ConnectionStrings.StandardSrv(), user.Username, user.Password).ApplyT(func(all []interface{}) string {
-			username := all[1].(string)
-			password := all[2].(string)
+		_, err = mongodbatlas.NewProjectIpAccessList(ctx, "nitric-ip", &mongodbatlas.ProjectIpAccessListArgs{
+			ProjectId: project.ID(),
+			CidrBlock: pulumi.String("0.0.0.0/0"),
+			Comment:   pulumi.String("cidr block for lambda, container app, or cloud run access"),
+		})
+		if err != nil {
+			return err
+		}
 
-			connectionString := strings.Split(all[0].(string), "//")[1]
-
-			return fmt.Sprintf("mongodb+srv://%s:%s@%s", username, password, connectionString)
+		clusterUrl := cluster.SrvAddress.ApplyT(func(uri string) string {
+			// Get the server address without the substring e.g "mongodb+srv://id.mongodb.net"
+			return uri[14:]
 		}).(pulumi.StringOutput)
+
+		// append the mongodb environment variables to all the services
+		for _, res := range resources {
+			config, ok := res.Config.(*pulumix.NitricPulumiServiceConfig)
+
+			if ok {
+				clusterUrl := pulumi.Sprintf("mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority&appName=nitric", user.Username, dbMasterPassword.Result, clusterUrl)
+
+				config.SetEnv("MONGO_CLUSTER_CONNECTION_STRING", clusterUrl)
+				config.SetEnv("MONGODB_ATLAS_PRIVATE_KEY", nil)
+				config.SetEnv("MONGODB_ATLAS_PUBLIC_KEY", nil)
+			}
+		}
 	}
 
 	return nil

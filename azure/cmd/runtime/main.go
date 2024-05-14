@@ -24,8 +24,8 @@ import (
 	"github.com/nitrictech/nitric/cloud/azure/runtime/resource"
 	"github.com/nitrictech/nitric/core/pkg/logger"
 
-	mongo_service "github.com/nitrictech/mongodb-provider/common"
 	http_service "github.com/nitrictech/nitric/cloud/azure/runtime/gateway"
+	aztables_service "github.com/nitrictech/nitric/cloud/azure/runtime/keyvalue"
 	azqueue_service "github.com/nitrictech/nitric/cloud/azure/runtime/queue"
 	key_vault "github.com/nitrictech/nitric/cloud/azure/runtime/secret"
 	azblob_service "github.com/nitrictech/nitric/cloud/azure/runtime/storage"
@@ -48,9 +48,9 @@ func main() {
 
 	membraneOpts.ApiPlugin = api.NewAzureApiGatewayProvider(provider)
 
-	membraneOpts.KeyValuePlugin, err = mongo_service.New()
+	membraneOpts.KeyValuePlugin, err = aztables_service.New()
 	if err != nil {
-		logger.Fatalf("There was an error initializing the mongo server: %v", err)
+		logger.Errorf("Failed to load document plugin: %s", err.Error())
 	}
 
 	membraneOpts.TopicsPlugin, err = event_grid.New(provider)

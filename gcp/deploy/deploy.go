@@ -19,7 +19,7 @@ type GcpExtensionProvider struct {
 func NewGcpExtensionProvider() *GcpExtensionProvider {
 	gcpProvider := deploy.NewNitricGcpProvider()
 
-	mongoProvider := mongodb.NewMongoDBProvider("AZURE")
+	mongoProvider := mongodb.NewMongoDBProvider("GCP")
 
 	return &GcpExtensionProvider{
 		NitricGcpPulumiProvider: *gcpProvider,

@@ -1,0 +1,3 @@
+provider: mongo/azure@0.0.1
+region: Australia East
+orgid:

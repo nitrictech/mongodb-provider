@@ -1,0 +1,4 @@
+provider: mongo/gcp@0.0.1
+region: australia-southeast1
+gcp-project-id:
+orgid:
