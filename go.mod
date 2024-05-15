@@ -13,14 +13,14 @@ replace (
 require (
 	github.com/charmbracelet/log v0.2.4
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/nitrictech/nitric/cloud/aws v0.0.0-20240510025749-b69ea254d49a
+	github.com/nitrictech/nitric/cloud/aws v0.0.0-20240515032924-52d9c03e4c12
 	github.com/nitrictech/nitric/cloud/azure v0.0.0-20240510025749-b69ea254d49a
-	github.com/nitrictech/nitric/cloud/common v0.0.0-20240510025749-b69ea254d49a
+	github.com/nitrictech/nitric/cloud/common v0.0.0-20240515032924-52d9c03e4c12
 	github.com/nitrictech/nitric/cloud/gcp v0.0.0-20240510025749-b69ea254d49a
 	github.com/nitrictech/nitric/core v0.0.0-20240510025749-b69ea254d49a
 	github.com/pulumi/pulumi-mongodbatlas/sdk/v2 v2.1.1
 	github.com/pulumi/pulumi-random/sdk/v4 v4.8.2
-	github.com/pulumi/pulumi/sdk/v3 v3.105.0
+	github.com/pulumi/pulumi/sdk/v3 v3.112.0
 	github.com/samber/lo v1.38.1
 	go.mongodb.org/mongo-driver v1.15.0
 	google.golang.org/grpc v1.62.1
@@ -60,6 +60,7 @@ require (
 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.1 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/propagator v0.34.2 // indirect
+	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
@@ -74,8 +75,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.1 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.27.4 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.4 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.6 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.6 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.15.2 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.4 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.4 // indirect
@@ -84,7 +83,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/apigatewaymanagementapi v1.19.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/apigatewayv2 v1.20.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.30.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.20.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.3.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.2 // indirect
@@ -169,7 +167,7 @@ require (
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/nitrictech/nitric/test v0.0.0-20240510025749-b69ea254d49a // indirect
-	github.com/nxadm/tail v1.4.8 // indirect
+	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/opentracing/basictracer-go v1.1.0 // indirect
@@ -182,7 +180,9 @@ require (
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/esc v0.6.2 // indirect
-	github.com/pulumi/pulumi-aws/sdk/v5 v5.26.0 // indirect
+	github.com/pulumi/pulumi-aws/sdk/v5 v5.35.0 // indirect
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.32.0 // indirect
+	github.com/pulumi/pulumi-awsx/sdk v1.0.6 // indirect
 	github.com/pulumi/pulumi-azure-native-sdk v1.101.0 // indirect
 	github.com/pulumi/pulumi-azure-native-sdk/apimanagement v1.92.0 // indirect
 	github.com/pulumi/pulumi-azure-native-sdk/app v1.92.0 // indirect
@@ -196,6 +196,7 @@ require (
 	github.com/pulumi/pulumi-azure-native-sdk/storage v1.92.0 // indirect
 	github.com/pulumi/pulumi-azure/sdk/v4 v4.42.0 // indirect
 	github.com/pulumi/pulumi-azuread/sdk/v5 v5.33.0 // indirect
+	github.com/pulumi/pulumi-docker/sdk/v3 v3.2.0 // indirect
 	github.com/pulumi/pulumi-docker/sdk/v4 v4.1.0 // indirect
 	github.com/pulumi/pulumi-gcp/sdk/v6 v6.55.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect

@@ -3,7 +3,6 @@ package deploy
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/nitrictech/nitric/cloud/common/deploy/pulumix"
 	deploymentspb "github.com/nitrictech/nitric/core/pkg/proto/deployments/v1"
@@ -48,7 +47,7 @@ func (p *MongoDBProvider) Pre(ctx *pulumi.Context, resources []*pulumix.NitricPu
 			ProjectId:                project.ID(),
 			Name:                     pulumi.String(clusterName),
 			AutoScalingDiskGbEnabled: pulumi.Bool(true),
-			ProviderRegionName:       pulumi.String(strings.ToUpper(region)),
+			ProviderRegionName:       pulumi.String(region),
 			MongoDbMajorVersion:      pulumi.String("7.0"),
 			ProviderName:             pulumi.String("TENANT"),
 			BackingProviderName:      pulumi.String(p.Provider),
@@ -102,7 +101,7 @@ func (p *MongoDBProvider) Pre(ctx *pulumi.Context, resources []*pulumix.NitricPu
 			config, ok := res.Config.(*pulumix.NitricPulumiServiceConfig)
 
 			if ok {
-				clusterUrl := pulumi.Sprintf("mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority&appName=nitric", user.Username, dbMasterPassword.Result, clusterUrl)
+				clusterUrl := pulumi.Sprintf("mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority", user.Username, dbMasterPassword.Result, clusterUrl)
 
 				config.SetEnv("MONGO_CLUSTER_CONNECTION_STRING", clusterUrl)
 				config.SetEnv("MONGODB_ATLAS_PRIVATE_KEY", nil)

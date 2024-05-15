@@ -1,6 +1,8 @@
 package deploy
 
 import (
+	"strings"
+
 	mongodb "github.com/nitrictech/mongodb-provider/common/deploy"
 	"github.com/nitrictech/nitric/cloud/aws/deploy"
 	common "github.com/nitrictech/nitric/cloud/common/deploy"
@@ -66,13 +68,17 @@ func (a *AwsExtensionProvider) Init(attributes map[string]interface{}) error {
 	return nil
 }
 
+func translateRegion(region string) string {
+	return strings.ToUpper(strings.Replace(region, "-", "_", -1))
+}
+
 func (a *AwsExtensionProvider) Pre(ctx *pulumi.Context, resources []*pulumix.NitricPulumiResource[any]) error {
 	err := a.NitricAwsPulumiProvider.Pre(ctx, resources)
 	if err != nil {
 		return err
 	}
 
-	err = a.MongoDBProvider.Pre(ctx, resources, a.ProjectName, a.Region)
+	err = a.MongoDBProvider.Pre(ctx, resources, a.ProjectName, translateRegion(a.Region))
 	if err != nil {
 		return err
 	}
