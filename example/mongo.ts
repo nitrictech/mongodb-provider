@@ -4,7 +4,9 @@ const uri = process.env.MONGO_CLUSTER_CONNECTION_STRING;
 
 const Profile = mongoose.model(
   "Profile",
-  new Schema({ _id: String, name: String })
+  new Schema({
+    name: String
+  })
 );
 
 async function connect() {

@@ -20,23 +20,25 @@ helloApi.get("/profile/:id", async (ctx) => {
   return ctx.res.json(profile);
 });
 
-helloApi.post("/profile/:id", async (ctx) => {
-  const { id } = ctx.req.params;
-
+helloApi.post("/profile", async (ctx) => {
   const { name } = ctx.req.json();
 
-  const profile = new Profile({ _id: id, name });
+  
 
   try {
-    await profile.save();
+    const profile = await Profile.create({ name });
+
+    console.log("successfully saved new profile")
+    ctx.res.body = `Successfully created: ${profile._id}`;
+
+    return ctx;
   } catch (err) {
+    console.error(err);
     ctx.res.status = 400;
     return ctx;
   }
 
-  ctx.res.body = `Successfully created: ${id}`;
-
-  return ctx;
+  
 });
 
 helloApi.delete("/profile/:id", async (ctx) => {
